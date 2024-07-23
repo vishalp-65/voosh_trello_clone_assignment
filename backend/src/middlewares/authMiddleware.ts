@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/userModel";
+import serverConfig from "../config/server-config";
 
 declare global {
     namespace Express {
@@ -23,7 +24,7 @@ export const protect = asyncHandler(
                 token = req.headers.authorization.split(" ")[1];
                 const decoded = jwt.verify(
                     token,
-                    process.env.JWT_SECRET as string
+                    serverConfig.JWT_SECRET_KEY as string
                 );
 
                 req.user = await User.findById((decoded as any).id).select(

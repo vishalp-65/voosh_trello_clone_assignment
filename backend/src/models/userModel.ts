@@ -4,7 +4,6 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    googleId?: string;
     profileImageURL?: string;
 }
 
@@ -26,7 +25,6 @@ const userSchema: Schema = new Schema(
             type: String,
             minLength: 8,
             required: true,
-            match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
         },
         profileImageURL: {
             type: String,

@@ -14,11 +14,12 @@ app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
 app.use("/api/users", userRoutes);
+app.get("/api/check", (req, res) => {
+    return res.status(201).json({ message: "Ok" });
+});
 
 app.use(notFound);
 app.use(errorHandler);
-
-const PORT = process.env.PORT || 8082;
 
 app.listen(serverConfig.PORT, async () => {
     console.log(

@@ -12,5 +12,6 @@ const router = express.Router();
 router.route("/").post(registerUser);
 router.post("/login", loginUser);
 router.post("/google", googleLogin);
+// router.route('/profile').put(protect, uploadToS3.single('image'), updateUserProfile);
 
 export default router;
