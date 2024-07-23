@@ -6,10 +6,13 @@ import taskRoutes from "./routes/taskRoutes";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware";
 import serverConfig from "./config/server-config";
 import databaseConfig from "./config/database-config";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
