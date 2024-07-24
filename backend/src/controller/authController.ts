@@ -103,7 +103,7 @@ export const updateUserProfile = asyncHandler(
 export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
     const { token } = req.body;
 
-    const userToken = await verifyGoogleAuthToken(token);
+    const user = await verifyGoogleAuthToken(token);
 
-    res.json({ token: userToken });
+    res.json(user);
 });

@@ -8,9 +8,12 @@ export const login = async (email: string, password: string) => {
         },
         body: JSON.stringify({ email, password }),
     });
+
     if (!response.ok) {
-        throw new Error("Login failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
     }
+
     return response.json();
 };
 
@@ -19,7 +22,6 @@ export const register = async (
     email: string,
     password: string
 ) => {
-    console.log("endpoint", endpoint);
     const response = await fetch(`${endpoint}/users/`, {
         method: "POST",
         headers: {
@@ -27,22 +29,28 @@ export const register = async (
         },
         body: JSON.stringify({ name, email, password }),
     });
+
     if (!response.ok) {
-        throw new Error("Registration failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
     }
+
     return response.json();
 };
 
 export const googleLogin = async (token: string) => {
-    const response = await fetch("/api/auth/google-login", {
+    const response = await fetch(`${endpoint}/users/google-login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ token }),
     });
+
     if (!response.ok) {
-        throw new Error("Google login failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Google login failed");
     }
+
     return response.json();
 };

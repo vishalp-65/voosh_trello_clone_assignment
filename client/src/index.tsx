@@ -11,10 +11,12 @@ import ThemeSwitch from "./components/theme-switch";
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
-const clientId = process.env.GOOGLE_CLIENT_ID as string;
+
+const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID as string;
+
 root.render(
     <React.StrictMode>
-        <GoogleOAuthProvider clientId={clientId}>
+        <GoogleOAuthProvider clientId={CLIENT_ID}>
             <BrowserRouter>
                 <AuthProvider>
                     <ThemeContextProvider>

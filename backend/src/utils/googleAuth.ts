@@ -10,28 +10,39 @@ interface GoogleTokenResult {
 }
 
 export const verifyGoogleAuthToken = async (token: string) => {
-    const googleOauthURL = new URL("https://oauth2.googleapis.com/tokeninfo");
-    googleOauthURL.searchParams.set("id_token", token);
+    try {
+        const googleOauthURL = new URL(
+            "https://oauth2.googleapis.com/tokeninfo"
+        );
+        googleOauthURL.searchParams.set("id_token", token);
 
-    const { data } = await axios.get<GoogleTokenResult>(
-        googleOauthURL.toString(),
-        {
-            responseType: "json",
+        const { data } = await axios.get<GoogleTokenResult>(
+            googleOauthURL.toString(),
+            {
+                responseType: "json",
+            }
+        );
+
+        let user: any = await User.findOne({ email: data.email });
+
+        if (!user) {
+            user = new User({
+                email: data.email,
+                name: `${data.given_name} ${data.family_name}`,
+                profileImageURL: data.picture,
+                password: `${data.given_name}${data.family_name}`, // Random password here
+            });
+
+            await user.save();
+        } else {
+            console.log("User found:", user);
         }
-    );
 
-    let user: any = await User.findOne({ email: data.email });
+        const newtoken = generateToken(user._id);
 
-    if (!user) {
-        user = new User({
-            email: data.email,
-            name: `${data.given_name} ${data.family_name}`,
-            profileImageURL: data.picture,
-            password: "", // Set an empty password or generate a random one
-        });
-
-        await user.save();
+        return { user, token: newtoken };
+    } catch (error) {
+        console.error("Error during Google authentication:", error);
+        throw new Error("Failed to verify Google token");
     }
-
-    return generateToken(user._id);
 };
