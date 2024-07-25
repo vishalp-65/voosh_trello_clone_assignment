@@ -7,7 +7,7 @@ import { googleLogin } from "../api/auth";
 const LoginPage: React.FC = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const { login, error, clearError } = useAuth();
+    const { user, login, error, clearError } = useAuth();
 
     useEffect(() => {
         // Clear error when component is mounted or form data changes

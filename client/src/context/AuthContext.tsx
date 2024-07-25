@@ -6,7 +6,7 @@ import React, {
     ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, register, googleLogin } from "../api/auth";
+import { login, register, googleLogin, getUserByToken } from "../api/auth";
 
 interface AuthContextProps {
     user: any;
@@ -16,6 +16,8 @@ interface AuthContextProps {
     logout: () => void;
     error: string | null;
     clearError: () => void;
+    isModalOpen: boolean;
+    handleModal: () => void;
 }
 
 interface AuthProviderProps {
@@ -26,22 +28,16 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const userData = localStorage.getItem("user");
-        if (userData) {
-            setUser(JSON.parse(userData));
-        }
-    }, []);
 
     const handleLogin = async (email: string, password: string) => {
         try {
             const data = await login(email, password);
-            console.log("data", data);
             setUser(data);
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("trello_token", JSON.stringify(data.token));
             navigate("/");
         } catch (err: any) {
             setError(err.message || "Login failed. Please try again.");
@@ -56,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const data = await register(name, email, password);
             setUser(data);
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("trello_token", JSON.stringify(data.token));
             navigate("/");
         } catch (err: any) {
             setError(err.message || "Registration failed. Please try again.");
@@ -68,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const data = await googleLogin(token);
             console.log("data", data);
             setUser(data.user);
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("trello_token", JSON.stringify(data.token));
             navigate("/");
         } catch (err: any) {
             setError(err.message || "Google login failed. Please try again.");
@@ -85,6 +81,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setError(null);
     };
 
+    const fetchUser = async () => {
+        setIsLoading(true);
+        const token = localStorage.getItem("trello_token");
+
+        if (token) {
+            try {
+                const user = await getUserByToken(token);
+                setUser(user);
+            } catch (err) {
+                setError((err as Error).message || "An error occurred");
+            }
+        }
+        setIsLoading(false);
+    };
+
+    const handleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    if (isLoading) {
+        <div>Loding..</div>;
+    }
+
+    useEffect(() => {
+        if (user) {
+            navigate("/");
+        }
+    }, [user]);
+
     return (
         <AuthContext.Provider
             value={{
@@ -95,6 +124,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 logout,
                 error,
                 clearError,
+                isModalOpen,
+                handleModal,
             }}
         >
             {children}

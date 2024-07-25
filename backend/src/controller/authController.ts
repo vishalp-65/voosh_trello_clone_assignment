@@ -107,3 +107,15 @@ export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
 
     res.json(user);
 });
+
+export const getUserByToken = asyncHandler(
+    async (req: Request, res: Response) => {
+        console.log("calling token");
+        if (!req.user) {
+            res.status(401);
+            throw new Error("Token invaild");
+        }
+
+        res.status(201).json(req.user);
+    }
+);

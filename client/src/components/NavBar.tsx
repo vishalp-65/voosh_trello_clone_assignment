@@ -1,13 +1,13 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar: React.FC = () => {
     const { user, logout } = useAuth();
 
     return (
-        <nav className="bg-gray-800 p-4 flex justify-between items-center">
-            <div className="text-white">
+        <nav className="bg-gray-50 dark:bg-gray-950 shadow-sm rounded-b-sm p-4 flex justify-between items-center">
+            <div className="">
                 <Link to="/" className="text-xl font-bold">
                     Task Manager
                 </Link>
@@ -15,19 +15,23 @@ const Navbar: React.FC = () => {
             <div className="flex items-center">
                 {!user ? (
                     <>
-                        <Link to="/login" className="mr-4 text-white">
+                        <Link
+                            to="/login"
+                            className="mr-4 px-2 py-1.5 rounded-md bg-blue-500 text-white"
+                        >
                             Login
                         </Link>
-                        <Link to="/register" className="text-white">
+                        <Link
+                            to="/register"
+                            className=" px-2 py-1.5 rounded-md bg-blue-500 text-white"
+                        >
                             Register
                         </Link>
                     </>
                 ) : (
                     <>
-                        <span className="mr-4 text-white">
-                            Hello, {user.name}
-                        </span>
-                        <button onClick={logout} className="text-white">
+                        <span className="mr-4">Hello, {user.name}</span>
+                        <button onClick={logout} className="">
                             Logout
                         </button>
                     </>

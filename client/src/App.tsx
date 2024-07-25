@@ -5,6 +5,7 @@ import PrivateRoute from "./router/PrivateRoute";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import ProfilePage from "./pages/ProfilePage";
+import TasksPage from "./pages/TaskPage";
 
 const App: React.FC = () => {
     return (
@@ -22,14 +23,14 @@ const App: React.FC = () => {
                             </PrivateRoute>
                         }
                     />
-                    {/* <Route
+                    <Route
                         path="/"
                         element={
                             <PrivateRoute>
-                            <TasksPage />
+                                <TasksPage />
                             </PrivateRoute>
-                            }
-                            /> */}
+                        }
+                    />
                 </Routes>
             </div>
         </div>

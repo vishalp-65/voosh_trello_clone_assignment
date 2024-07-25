@@ -14,29 +14,24 @@ declare global {
 
 export const protect = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        let token;
+        let token = req.header("Authorization")?.replace("Bearer ", "");
+        token = token?.replace(/^"(.*)"$/, "$1");
+        // console.log("token value", token);
+        try {
+            const decoded = jwt.verify(
+                token!,
+                serverConfig.JWT_SECRET_KEY as string
+            );
 
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer")
-        ) {
-            try {
-                token = req.headers.authorization.split(" ")[1];
-                const decoded = jwt.verify(
-                    token,
-                    serverConfig.JWT_SECRET_KEY as string
-                );
+            req.user = await User.findById((decoded as any).id).select(
+                "-password"
+            );
 
-                req.user = await User.findById((decoded as any).id).select(
-                    "-password"
-                );
-
-                next();
-            } catch (error) {
-                console.error(error);
-                res.status(401);
-                throw new Error("Not authorized, token failed");
-            }
+            next();
+        } catch (error) {
+            console.error(error);
+            res.status(401);
+            throw new Error("Not authorized, token failed");
         }
 
         if (!token) {
